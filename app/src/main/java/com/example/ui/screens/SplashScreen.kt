@@ -115,7 +115,7 @@ private fun PrimaryBrandSplash() {
     ) {
       Image(
         painter = painterResource(id = R.drawable.img_splash_brand),
-        contentDescription = "Logo de Mi Vuelta",
+        contentDescription = "Logo de IAEstudio",
         contentScale = ContentScale.Fit,
         modifier = Modifier
           .widthIn(max = 260.dp)
@@ -157,7 +157,7 @@ private fun SecondaryWelcomeSplash(
       // Top brand bar using uploaded logo
       Image(
         painter = painterResource(id = R.drawable.img_splash_brand),
-        contentDescription = "Mi Vuelta",
+        contentDescription = "IAEstudio",
         contentScale = ContentScale.Fit,
         modifier = Modifier
           .height(52.dp)

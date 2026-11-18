@@ -13,7 +13,7 @@ import com.example.data.local.ThemePreferenceStore
 import com.example.notifications.VueltaReminderScheduler
 import com.example.ui.AppNavigation
 import com.example.ui.theme.AppThemeMode
-import com.example.ui.theme.MiVueltaTheme
+import com.example.ui.theme.IaestudioTheme
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         }
       }
 
-      MiVueltaTheme(themeMode = themeMode) {
+      IaestudioTheme(themeMode = themeMode) {
         AppNavigation(
           themeMode = themeMode,
           onSetThemeMode = { themeStore.setThemeMode(it) },

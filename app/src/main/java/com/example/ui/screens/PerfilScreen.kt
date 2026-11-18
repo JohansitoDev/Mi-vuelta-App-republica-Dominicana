@@ -78,12 +78,12 @@ fun PerfilScreen(
   val context = LocalContext.current
   val isPro = userProfile?.isProUser == true
   val displayName = userProfile?.displayName?.takeIf { it.isNotBlank() }
-    ?: if (isGuestSession) "Invitado" else "Usuario Mi Vuelta"
+    ?: if (isGuestSession) "Invitado" else "Usuario IAEstudio"
   val initials = displayName.split(" ")
     .mapNotNull { it.firstOrNull()?.uppercaseChar() }
     .take(2)
     .joinToString("")
-    .ifEmpty { "MV" }
+    .ifEmpty { "IE" }
 
   var showCreateFamilyDialog by remember { mutableStateOf(false) }
   var showJoinFamilyDialog by remember { mutableStateOf(false) }
@@ -253,7 +253,7 @@ fun PerfilScreen(
               verticalAlignment = Alignment.CenterVertically,
             ) {
               Text(
-                text = if (isPro) "Plan Mi Vuelta Pro" else "Vueltas gratis activas",
+                text = if (isPro) "Plan IAEstudio Pro" else "Vueltas gratis activas",
                 style = MaterialTheme.typography.titleMedium,
               )
               Surface(
@@ -333,7 +333,7 @@ fun PerfilScreen(
               )
               Column {
                 Text(
-                  text = "Mi Vuelta Pro",
+                  text = "IAEstudio Pro",
                   style = MaterialTheme.typography.titleLarge,
                 )
                 Text(

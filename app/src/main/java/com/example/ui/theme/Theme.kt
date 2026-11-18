@@ -72,7 +72,7 @@ private val PureBlackColorScheme = darkColorScheme(
   onErrorContainer = Color(0xFFFFDAD6),
 )
 
-val MiVueltaShapes = Shapes(
+val IaestudioShapes = Shapes(
   small = RoundedCornerShape(10.dp),
   medium = RoundedCornerShape(16.dp),
   large = RoundedCornerShape(22.dp),
@@ -80,7 +80,7 @@ val MiVueltaShapes = Shapes(
 )
 
 @Composable
-fun MiVueltaTheme(
+fun IaestudioTheme(
   themeMode: AppThemeMode = AppThemeMode.LIGHT,
   content: @Composable () -> Unit,
 ) {
@@ -90,8 +90,8 @@ fun MiVueltaTheme(
   CompositionLocalProvider(LocalIsBlackTheme provides isBlack) {
     MaterialTheme(
       colorScheme = colorScheme,
-      typography = MiVueltaTypography,
-      shapes = MiVueltaShapes,
+      typography = IaestudioTypography,
+      shapes = IaestudioShapes,
       content = content,
     )
   }

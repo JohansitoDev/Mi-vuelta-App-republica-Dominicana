@@ -1,6 +1,6 @@
 {
-  "name": "Mi Vuelta",
-  "description": "App dominicana para recordar tus vueltas, pagos y diligencias con foto del recibo, alertas, calendario y vueltas compartidas.",
+  "name": "IAEstudio",
+  "description": "App para IAEstudio con alertas, calendario y recordatorios.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

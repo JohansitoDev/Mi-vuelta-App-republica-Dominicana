@@ -28,7 +28,7 @@ import kotlin.random.Random
 class FreeLimitReachedException :
   IllegalStateException("Has alcanzado el límite de $FREE_PLAN_ACTIVE_LIMIT vueltas activas del plan Gratis.")
 
-class MiVueltaRepository(
+class IaestudioRepository(
   private val db: FirebaseFirestore,
   private val auth: FirebaseAuth = Firebase.auth,
 ) : VueltaDataSource {
@@ -49,7 +49,7 @@ class MiVueltaRepository(
     return try {
       val docRef = db.collection("users").document(uid)
       val snap = docRef.get().await()
-      val safeName = (user.displayName?.takeIf { it.isNotBlank() } ?: "Usuario Mi Vuelta").take(80)
+      val safeName = (user.displayName?.takeIf { it.isNotBlank() } ?: "Usuario IAEstudio").take(80)
       val safeEmail = (user.email ?: "").take(120)
       if (!snap.exists()) {
         val payload = mapOf(

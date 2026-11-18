@@ -14,7 +14,7 @@ import java.util.Calendar
 class VueltaReminderScheduler(private val context: Context) {
 
   companion object {
-    const val CHANNEL_ID = "mi_vuelta_reminders"
+    const val CHANNEL_ID = "iaestudio_reminders"
     const val EXTRA_VUELTA_ID = "extra_vuelta_id"
     const val EXTRA_VUELTA_TITLE = "extra_vuelta_title"
     const val EXTRA_DAYS_BEFORE = "extra_days_before"

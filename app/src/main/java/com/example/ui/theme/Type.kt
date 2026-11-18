@@ -22,7 +22,7 @@ val PlusJakartaFontFamily = FontFamily(
   Font(R.font.plus_jakarta_sans, FontWeight.Bold),
 )
 
-val MiVueltaTypography = Typography(
+val IaestudioTypography = Typography(
   displaySmall = TextStyle(
     fontFamily = OutfitFontFamily,
     fontWeight = FontWeight.Bold,

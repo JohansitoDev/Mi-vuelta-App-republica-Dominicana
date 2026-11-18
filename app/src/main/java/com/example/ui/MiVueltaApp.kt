@@ -53,7 +53,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.R
-import com.example.data.firebase.MiVueltaRepository
+import com.example.data.firebase.IaestudioRepository
 import com.example.data.firebase.authStateFlow
 import com.example.data.firebase.onGoogleSignInClicked
 import com.example.data.firebase.signOutUser
@@ -114,7 +114,7 @@ fun AppNavigation(
   val activeSession: AppSession = when {
     cloudUser != null -> AppSession.GoogleCloud(
       uid = cloudUser!!.uid,
-      displayName = cloudUser!!.displayName ?: "Usuario Mi Vuelta",
+      displayName = cloudUser!!.displayName ?: "Usuario IAEstudio",
       email = cloudUser!!.email.orEmpty(),
     )
     localSession != null -> localSession!!
@@ -208,7 +208,7 @@ private fun AuthenticatedApp(
         val dataSource = if (session is AppSession.GoogleCloud) {
           val databaseId = app.getString(R.string.firestore_database_id)
           val db = FirebaseFirestore.getInstance(databaseId)
-          MiVueltaRepository(db)
+          IaestudioRepository(db)
         } else {
           val local = session as AppSession.LocalAccount
           LocalVueltaRepository(
@@ -447,7 +447,7 @@ private fun AuthenticatedApp(
       onDismissRequest = { showFreeLimitDialog = false },
       title = { Text("Límite de 5 vueltas gratis") },
       text = {
-        Text("Ya tienes 5 vueltas activas en el plan Gratis. Marca una como hecha o activa Mi Vuelta Pro (RD$150/mes) para tener vueltas ilimitadas y compartir con tu familia.")
+        Text("Ya tienes 5 vueltas activas en el plan Gratis. Marca una como hecha o activa IAEstudio Pro (RD$150/mes) para tener vueltas ilimitadas y compartir con tu familia.")
       },
       confirmButton = {
         TextButton(
@@ -457,7 +457,7 @@ private fun AuthenticatedApp(
             navigateTopTab(ROUTE_PERFIL)
           }
         ) {
-          Text("Ver Mi Vuelta Pro")
+          Text("Ver IAEstudio Pro")
         }
       },
       dismissButton = {

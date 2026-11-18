@@ -2,7 +2,7 @@
   "entities": {
     "UserProfile": {
       "title": "UserProfile",
-      "description": "Perfil del usuario en Mi Vuelta con su plan (gratis o pro) y grupo familiar.",
+      "description": "Perfil del usuario en IAEstudio con su plan y grupo familiar.",
       "type": "object",
       "properties": {
         "userId": {
@@ -41,7 +41,7 @@
     },
     "FamilyGroup": {
       "title": "FamilyGroup",
-      "description": "Grupo familiar para compartir vueltas en Mi Vuelta Pro.",
+      "description": "Grupo familiar para compartir tareas en IAEstudio Pro.",
       "type": "object",
       "properties": {
         "ownerId": {

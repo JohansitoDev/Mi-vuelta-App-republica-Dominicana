@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.firebase.FreeLimitReachedException
-import com.example.data.firebase.MiVueltaRepository
+import com.example.data.firebase.IaestudioRepository
 import com.example.data.local.VueltaDataSource
 import com.example.data.model.FamilyGroup
 import com.example.data.model.UserProfile
@@ -104,7 +104,7 @@ class MainViewModel(
     )
 
   init {
-    if (repository is MiVueltaRepository && firebaseUser != null) {
+    if (repository is IaestudioRepository && firebaseUser != null) {
       viewModelScope.launch {
         repository.ensureUserProfile(firebaseUser)
       }
@@ -251,7 +251,7 @@ class MainViewModel(
     viewModelScope.launch {
       repository.setPlanTier(currentUserId, "pro")
         .onSuccess {
-          _events.tryEmit(UiEvent.ShowMessage("¡Mi Vuelta Pro activado! Vueltas ilimitadas y familia habilitada"))
+          _events.tryEmit(UiEvent.ShowMessage("¡IAEstudio Pro activado! Vueltas ilimitadas y familia habilitada"))
         }
         .onFailure { err ->
           _events.tryEmit(UiEvent.ShowMessage(err.localizedMessage ?: "No se pudo activar Pro"))

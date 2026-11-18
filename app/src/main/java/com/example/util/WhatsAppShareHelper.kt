@@ -18,13 +18,13 @@ object WhatsAppShareHelper {
     val message = buildString {
       append("Oye, recuerda esta vuelta: *${vuelta.title}* $statusLine.")
       append(noteLine)
-      append("\n¡Que no nos cobren mora! — Enviado desde Mi Vuelta")
+      append("\n¡Que no nos cobren mora! — Enviado desde IAEstudio")
     }
     launchWhatsAppOrChooser(context, message, receiptUri)
   }
 
   fun shareFamilyInvite(context: Context, familyName: String, inviteCode: String) {
-    val message = "Únete a nuestro grupo \"$familyName\" en Mi Vuelta para compartir pagos y diligencias. Usa el código: *$inviteCode*"
+    val message = "Únete a nuestro grupo \"$familyName\" en IAEstudio para compartir pagos y diligencias. Usa el código: *$inviteCode*"
     launchWhatsAppOrChooser(context, message, null)
   }
 

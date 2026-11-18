@@ -56,7 +56,7 @@ class ThemePreferenceStore(context: Context) {
   }
 
   private companion object {
-    const val PREFS_NAME = "mi_vuelta_theme_prefs"
+    const val PREFS_NAME = "iaestudio_theme_prefs"
     const val KEY_THEME_MODE = "theme_mode"
   }
 }
@@ -191,7 +191,7 @@ class LocalSessionStore(context: Context) {
 
   companion object {
     const val GUEST_UID = "local_guest"
-    private const val PREFS_NAME = "mi_vuelta_local_auth"
+    private const val PREFS_NAME = "iaestudio_local_auth"
     private const val KEY_ACCOUNTS_JSON = "accounts_json"
     private const val KEY_ACTIVE_UID = "active_uid"
     private const val KEY_ACTIVE_NAME = "active_name"

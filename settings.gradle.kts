@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Mi Vuelta"
+rootProject.name = "IAEstudio"
 
 include(":app")

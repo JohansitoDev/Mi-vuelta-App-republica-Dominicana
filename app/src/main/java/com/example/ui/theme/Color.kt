@@ -24,7 +24,7 @@ val WarmOutline = Color(0xFFE0DAD0)
 val InkPrimary = Color(0xFF171C24)
 val InkSecondary = Color(0xFF565E6B)
 
-// Pure Black Mode ("Modo Negro") Palette matching MV Mi Vuelta brand
+// Pure Black Mode ("Modo Negro") Palette matching IAEstudio brand
 val PureBlackBackground = Color(0xFF000000)
 val PureBlackSurface = Color(0xFF0B0F17)
 val PureBlackSurfaceVariant = Color(0xFF141A24)
