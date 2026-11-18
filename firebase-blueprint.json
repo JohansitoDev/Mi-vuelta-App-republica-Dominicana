@@ -1,0 +1,215 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Perfil del usuario en Mi Vuelta con su plan (gratis o pro) y grupo familiar.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID del usuario"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Nombre visible del usuario"
+        },
+        "email": {
+          "type": "string",
+          "description": "Correo de Google del usuario"
+        },
+        "planTier": {
+          "type": "string",
+          "enum": ["free", "pro"],
+          "description": "Nivel de suscripción del usuario"
+        },
+        "familyId": {
+          "type": "string",
+          "description": "ID del grupo familiar activo si pertenece a uno"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de creación establecida por FieldValue.serverTimestamp()"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de actualización establecida por FieldValue.serverTimestamp()"
+        }
+      },
+      "required": ["userId", "displayName", "planTier", "createdAt", "updatedAt"]
+    },
+    "FamilyGroup": {
+      "title": "FamilyGroup",
+      "description": "Grupo familiar para compartir vueltas en Mi Vuelta Pro.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID del creador del grupo familiar"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre del grupo familiar"
+        },
+        "inviteCode": {
+          "type": "string",
+          "description": "Código corto de invitación al grupo"
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Lista de UIDs de miembros del grupo (máximo 10)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de creación establecida por FieldValue.serverTimestamp()"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de actualización establecida por FieldValue.serverTimestamp()"
+        }
+      },
+      "required": ["ownerId", "name", "inviteCode", "memberUids", "createdAt", "updatedAt"]
+    },
+    "FamilyInvite": {
+      "title": "FamilyInvite",
+      "description": "Índice directo de invitación por código para unirse a un grupo familiar.",
+      "type": "object",
+      "properties": {
+        "familyId": {
+          "type": "string",
+          "description": "ID del grupo familiar asociado"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID del usuario que creó la invitación"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de creación establecida por FieldValue.serverTimestamp()"
+        }
+      },
+      "required": ["familyId", "createdBy", "createdAt"]
+    },
+    "Vuelta": {
+      "title": "Vuelta",
+      "description": "Pendiente, pago o diligencia con fecha de vencimiento, recordatorios y foto del recibo.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID del creador de la vuelta"
+        },
+        "ownerName": {
+          "type": "string",
+          "description": "Nombre visible del creador"
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "UIDs con acceso de lectura y marcado (incluye ownerId)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Título de la vuelta"
+        },
+        "templateKey": {
+          "type": "string",
+          "description": "Clave de la plantilla dominicana usada"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Notas adicionales opcionales"
+        },
+        "dueDateMillis": {
+          "type": "integer",
+          "description": "Fecha de vencimiento en milisegundos UTC (medianoche local)"
+        },
+        "remind2Days": {
+          "type": "boolean",
+          "description": "Avisar 2 días antes"
+        },
+        "remind1Day": {
+          "type": "boolean",
+          "description": "Avisar 1 día antes"
+        },
+        "remindSameDay": {
+          "type": "boolean",
+          "description": "Avisar el mismo día"
+        },
+        "reminderHour": {
+          "type": "integer",
+          "description": "Hora del aviso (0-23)"
+        },
+        "reminderMinute": {
+          "type": "integer",
+          "description": "Minuto del aviso (0-59)"
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Si la vuelta ya fue completada"
+        },
+        "sharedWithFamily": {
+          "type": "boolean",
+          "description": "Si la vuelta se comparte con el grupo familiar"
+        },
+        "receiptBase64": {
+          "type": "string",
+          "description": "Imagen JPEG comprimida del recibo codificada en Base64"
+        },
+        "completedAtMillis": {
+          "type": "integer",
+          "description": "Timestamp en milisegundos cuando se completó"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de creación establecida por FieldValue.serverTimestamp()"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de actualización establecida por FieldValue.serverTimestamp()"
+        }
+      },
+      "required": [
+        "ownerId",
+        "ownerName",
+        "memberUids",
+        "title",
+        "templateKey",
+        "notes",
+        "dueDateMillis",
+        "remind2Days",
+        "remind1Day",
+        "remindSameDay",
+        "reminderHour",
+        "reminderMinute",
+        "completed",
+        "sharedWithFamily",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Perfil privado del usuario propietario"
+    },
+    "/families/{familyId}": {
+      "schema": { "$ref": "#/entities/FamilyGroup" },
+      "description": "Grupos familiares para compartir vueltas"
+    },
+    "/family_invites/{inviteCode}": {
+      "schema": { "$ref": "#/entities/FamilyInvite" },
+      "description": "Búsqueda directa por código de invitación familiar"
+    },
+    "/vueltas/{vueltaId}": {
+      "schema": { "$ref": "#/entities/Vuelta" },
+      "description": "Vueltas personales y compartidas con miembros autorizados"
+    }
+  }
+}

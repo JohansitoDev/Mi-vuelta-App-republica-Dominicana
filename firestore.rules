@@ -1,0 +1,211 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Global Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    // --- Entity Validation Helpers ---
+    function isValidUserProfile(data) {
+      return data.userId is string && isValidId(data.userId) &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 120)) &&
+             data.planTier is string && data.planTier in ['free', 'pro'] &&
+             (!('familyId' in data) || (data.familyId is string && data.familyId.size() <= 64)) &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidFamilyGroup(data) {
+      return data.ownerId is string && isValidId(data.ownerId) &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 60 &&
+             data.inviteCode is string && data.inviteCode.size() >= 6 && data.inviteCode.size() <= 12 &&
+             data.inviteCode.matches('^[A-Z0-9]+$') &&
+             data.memberUids is list && data.memberUids.size() >= 1 && data.memberUids.size() <= 10 &&
+             data.memberUids[0] is string &&
+             data.ownerId in data.memberUids &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidFamilyInvite(data) {
+      return data.familyId is string && isValidId(data.familyId) &&
+             data.createdBy is string && isValidId(data.createdBy) &&
+             isValidTimestamp(data.createdAt);
+    }
+
+    function isValidVuelta(data) {
+      return data.ownerId is string && isValidId(data.ownerId) &&
+             data.ownerName is string && data.ownerName.size() >= 1 && data.ownerName.size() <= 80 &&
+             data.memberUids is list && data.memberUids.size() >= 1 && data.memberUids.size() <= 10 &&
+             data.memberUids[0] is string &&
+             data.ownerId in data.memberUids &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
+             data.templateKey is string && data.templateKey.size() <= 40 &&
+             data.notes is string && data.notes.size() <= 300 &&
+             data.dueDateMillis is int && data.dueDateMillis > 0 &&
+             data.remind2Days is bool &&
+             data.remind1Day is bool &&
+             data.remindSameDay is bool &&
+             data.reminderHour is int && data.reminderHour >= 0 && data.reminderHour <= 23 &&
+             data.reminderMinute is int && data.reminderMinute >= 0 && data.reminderMinute <= 59 &&
+             data.completed is bool &&
+             data.sharedWithFamily is bool &&
+             (!('receiptBase64' in data) || (data.receiptBase64 is string && data.receiptBase64.size() <= 250000)) &&
+             (!('completedAtMillis' in data) || (data.completedAtMillis is int && data.completedAtMillis >= 0)) &&
+             isValidTimestamp(data.createdAt) &&
+             isValidTimestamp(data.updatedAt);
+    }
+
+    // --- Collection: /users/{userId} ---
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && request.auth.uid == userId;
+      allow list: if isSignedIn() && request.auth.uid == userId;
+
+      allow create: if isSignedIn() &&
+                       isValidId(userId) &&
+                       request.auth.uid == userId &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll(['userId', 'displayName', 'planTier', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'displayName', 'email', 'planTier', 'familyId', 'createdAt', 'updatedAt']) &&
+                       isValidUserProfile(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(userId) &&
+                       request.auth.uid == userId &&
+                       isValidUserProfile(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'email', 'planTier', 'familyId', 'updatedAt']);
+
+      allow delete: if isSignedIn() && isValidId(userId) && request.auth.uid == userId;
+    }
+
+    // --- Collection: /families/{familyId} ---
+    match /families/{familyId} {
+      allow get: if isSignedIn() && isValidId(familyId) && request.auth.uid in existing().memberUids;
+      allow list: if isSignedIn() && request.auth.uid in existing().memberUids;
+
+      allow create: if isSignedIn() &&
+                       isValidId(familyId) &&
+                       incoming().ownerId == request.auth.uid &&
+                       request.auth.uid in incoming().memberUids &&
+                       incoming().keys().hasAll(['ownerId', 'name', 'inviteCode', 'memberUids', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['ownerId', 'name', 'inviteCode', 'memberUids', 'createdAt', 'updatedAt']) &&
+                       isValidFamilyGroup(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(familyId) &&
+                       isValidFamilyGroup(incoming()) &&
+                       incoming().ownerId == existing().ownerId &&
+                       incoming().inviteCode == existing().inviteCode &&
+                       incoming().createdAt == existing().createdAt && (
+                         // Action 1: Owner updates group name or members
+                         (existing().ownerId == request.auth.uid &&
+                          incoming().diff(existing()).affectedKeys().hasOnly(['name', 'memberUids', 'updatedAt'])) ||
+                         // Action 2: Invited user joins group by adding only their own UID
+                         (!(request.auth.uid in existing().memberUids) &&
+                          request.auth.uid in incoming().memberUids &&
+                          incoming().memberUids.hasAll(existing().memberUids) &&
+                          incoming().memberUids.size() == existing().memberUids.size() + 1 &&
+                          incoming().diff(existing()).affectedKeys().hasOnly(['memberUids', 'updatedAt'])) ||
+                         // Action 3: Member leaves group by removing only their own UID
+                         (request.auth.uid in existing().memberUids &&
+                          existing().ownerId != request.auth.uid &&
+                          !(request.auth.uid in incoming().memberUids) &&
+                          existing().memberUids.hasAll(incoming().memberUids) &&
+                          incoming().memberUids.size() == existing().memberUids.size() - 1 &&
+                          incoming().diff(existing()).affectedKeys().hasOnly(['memberUids', 'updatedAt']))
+                       );
+
+      allow delete: if isSignedIn() && isValidId(familyId) && existing().ownerId == request.auth.uid;
+    }
+
+    // --- Collection: /family_invites/{inviteCode} ---
+    match /family_invites/{inviteCode} {
+      // Direct lookup by inviteCode only; listing is strictly forbidden to prevent enumeration
+      allow get: if isSignedIn() && isValidId(inviteCode);
+      allow list: if false;
+
+      allow create: if isSignedIn() &&
+                       isValidId(inviteCode) &&
+                       inviteCode.matches('^[A-Z0-9]{6,12}$') &&
+                       incoming().createdBy == request.auth.uid &&
+                       incoming().keys().hasAll(['familyId', 'createdBy', 'createdAt']) &&
+                       incoming().keys().hasOnly(['familyId', 'createdBy', 'createdAt']) &&
+                       isValidFamilyInvite(incoming()) &&
+                       exists(/databases/$(database)/documents/families/$(incoming().familyId));
+
+      allow update: if false;
+      allow delete: if isSignedIn() && isValidId(inviteCode) && existing().createdBy == request.auth.uid;
+    }
+
+    // --- Collection: /vueltas/{vueltaId} ---
+    match /vueltas/{vueltaId} {
+      allow get: if isSignedIn() && isValidId(vueltaId) && request.auth.uid in existing().memberUids;
+      allow list: if isSignedIn() && request.auth.uid in existing().memberUids;
+
+      allow create: if isSignedIn() &&
+                       isValidId(vueltaId) &&
+                       incoming().ownerId == request.auth.uid &&
+                       request.auth.uid in incoming().memberUids &&
+                       incoming().keys().hasAll([
+                         'ownerId', 'ownerName', 'memberUids', 'title', 'templateKey',
+                         'notes', 'dueDateMillis', 'remind2Days', 'remind1Day',
+                         'remindSameDay', 'reminderHour', 'reminderMinute',
+                         'completed', 'sharedWithFamily', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'ownerId', 'ownerName', 'memberUids', 'title', 'templateKey',
+                         'notes', 'dueDateMillis', 'remind2Days', 'remind1Day',
+                         'remindSameDay', 'reminderHour', 'reminderMinute',
+                         'completed', 'sharedWithFamily', 'receiptBase64',
+                         'completedAtMillis', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidVuelta(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(vueltaId) &&
+                       isValidVuelta(incoming()) &&
+                       incoming().ownerId == existing().ownerId &&
+                       incoming().createdAt == existing().createdAt && (
+                         // Action 1: Any authorized member can mark completed / uncompleted
+                         (request.auth.uid in existing().memberUids &&
+                          incoming().diff(existing()).affectedKeys().hasOnly(['completed', 'completedAtMillis', 'updatedAt'])) ||
+                         // Action 2: Owner can update full vuelta details or receipt
+                         (existing().ownerId == request.auth.uid &&
+                          incoming().diff(existing()).affectedKeys().hasOnly([
+                            'ownerName', 'memberUids', 'title', 'templateKey', 'notes',
+                            'dueDateMillis', 'remind2Days', 'remind1Day', 'remindSameDay',
+                            'reminderHour', 'reminderMinute', 'completed', 'sharedWithFamily',
+                            'receiptBase64', 'completedAtMillis', 'updatedAt'
+                          ]))
+                       );
+
+      allow delete: if isSignedIn() && isValidId(vueltaId) && existing().ownerId == request.auth.uid;
+    }
+  }
+}

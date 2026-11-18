@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Mi Vuelta</string>
+    <string name="tagline_auth">No pagues más moras</string>
+    <string name="subtitle_auth">Anota tu vuelta en 15 segundos, tírale foto al recibo y recibe avisos antes que venza.</string>
+    <string name="btn_google_signin">Continuar con Google</string>
+    <string name="nav_inicio">Mis Vueltas</string>
+    <string name="nav_calendario">Calendario</string>
+    <string name="nav_perfil">Perfil / Pro</string>
+    <string name="action_nueva_vuelta">Nueva vuelta</string>
+    <string name="action_ya_lo_hice">Ya lo hice</string>
+    <string name="action_reabrir">Reabrir vuelta</string>
+    <string name="action_whatsapp">Compartir por WhatsApp</string>
+    <string name="action_tirar_foto">Tirar foto</string>
+    <string name="action_elegir_galeria">Elegir foto</string>
+    <string name="notif_channel_name">Avisos de Mi Vuelta</string>
+    <string name="notif_channel_desc">Recordatorios para que no se te pase ninguna vuelta ni pago</string>
+    <string name="notif_action_paid">Ya lo pagué</string>
+    <string name="notif_action_snooze">Avisarme mañana</string>
+</resources>
